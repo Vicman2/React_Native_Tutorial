@@ -2,14 +2,15 @@ import { StatusBar } from 'expo-status-bar';
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
 
-import ListItem from './src/components/ListItem/ListItem'
 import PlaceList from './src/components/PlaceList/PlaceList';
+import PlaceDetail from './src/components/PlaceDetail/PlaceDetail'
 
 
 class App extends Component{
   state ={
     placeName:"", 
-    places : []
+    places : [], 
+    selectedPlace: null
   }
   placeNameChangeHandler = (val) => {
     this.setState({
@@ -23,37 +24,65 @@ class App extends Component{
     this.setState(prevState => {
 
       return {
-        places: prevState.places.concat({key: Math.random(), value: prevState.placeName})
-      }
-    })
-  }
-  deleteItemHandler = (index) => {
-    this.setState((prevState) => {
-      return{
-        places : prevState.places.filter((place, i) => {
-          return place.key !== index
+        places: prevState.places.concat({
+          key: Math.random().toString(),
+          name: prevState.placeName,
+          image: {
+            uri: "https://source.unsplash.com/WLUHO9A_xik/1600x900"
+          }
         })
       }
     })
   }
+  placeDeletedHandler = () => {
+    this.setState((prevState) => {
+      return{
+        places : prevState.places.filter((place, i) => {
+          return place.key !== prevState.selectedPlace.key
+        }), 
+        selectedPlace: null
+      }
+    })
+  }
+  modalClosedHandler = () => {
+    this.setState({selectedPlace: null})
+  }
+  selectItemHandler = (key) => {
+    this.setState(prevState => {
+      return {
+        selectedPlace: prevState.places.find(place => {
+          return place.key === key; 
+        })
+      }
+    })
+    
+  }
   render(){
     return (
       <View style={styles.container}>
+        <PlaceDetail
+        selectedPlace ={this.state.selectedPlace}
+        onItemDeleted={this.placeDeletedHandler}
+        onModalClosed={this.modalClosedHandler}
+         />
         <View style={styles.InputContainer}>
+
           <TextInput
           placeholder="An Awesome Vicman"
           style={styles.placeInput}
           value={this.state.placeName}
           onChangeText={this.placeNameChangeHandler}/>
+
           <Button 
           style={styles.placeButton}
           title="Add" 
           onPress={this.placeSubmiteHandler}
           />
+
         </View>
         <PlaceList 
           places={this.state.places}
-          deleteItem={this.deleteItemHandler}
+          selectItem={this.selectItemHandler}
         />
       </View>
     );
@@ -68,6 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    margin: 10
   },
   InputContainer: {
     // flex:1,
