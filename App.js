@@ -1,7 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
 
+import ListItem from './src/components/ListItem/ListItem'
+import PlaceList from './src/components/PlaceList/PlaceList';
 
 
 class App extends Component{
@@ -19,17 +21,22 @@ class App extends Component{
       return;
     }
     this.setState(prevState => {
+
       return {
-        places: prevState.places.concat(prevState.placeName)
+        places: prevState.places.concat({key: Math.random(), value: prevState.placeName})
+      }
+    })
+  }
+  deleteItemHandler = (index) => {
+    this.setState((prevState) => {
+      return{
+        places : prevState.places.filter((place, i) => {
+          return place.key !== index
+        })
       }
     })
   }
   render(){
-    const placesOutput = this.state.places.map((place, index) => {
-      return(
-        <Text key={index}> {place} </Text>
-      )
-    })
     return (
       <View style={styles.container}>
         <View style={styles.InputContainer}>
@@ -44,9 +51,10 @@ class App extends Component{
           onPress={this.placeSubmiteHandler}
           />
         </View>
-        <View>
-          {placesOutput}
-        </View>
+        <PlaceList 
+          places={this.state.places}
+          deleteItem={this.deleteItemHandler}
+        />
       </View>
     );
   }
@@ -73,5 +81,5 @@ const styles = StyleSheet.create({
   }, 
   placeButton: {
     width:"30%"
-  }
+  },
 });
