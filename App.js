@@ -1,4 +1,9 @@
 import React, {Component} from 'react';
+import {NavigationContainer} from '@react-navigation/native'
+import {createStackNavigator} from '@react-navigation/stack'
+
+import AuthScreen from './src/screens/Auth/Auth'
+import DetailScreen from './src/screens/Detail/Detail'
 import {connect} from 'react-redux'
 import { StyleSheet, View, TextInput, Button } from 'react-native';
 
@@ -7,59 +12,85 @@ import PlaceDetail from './src/components/PlaceDetail/PlaceDetail'
 import {addPlace, deletPlace, selectPlace, deselectPlace} from './src/store/actions/index'
 
 
+const Stack = createStackNavigator()
+
 class App extends Component{
-  state ={
-    placeName:"", 
-  }
-  placeNameChangeHandler = (val) => {
-    this.setState({
-      placeName: val
-    })
-  }
-  placeSubmiteHandler= () => {
-    if(this.state.placeName.trim() === ""){
-      return;
-    }
-    this.props.onAddPlace(this.state.placeName)
-  }
-  placeDeletedHandler = () => {
-    this.props.onDeletePlace()
-  }
-  modalClosedHandler = () => {
-    this.props.onDeselectPlace()
-  }
-  selectItemHandler = (key) => {
-    this.props.onSelectPlace(key)
-  }
+  // state ={
+  //   placeName:"", 
+  // }
+  // placeNameChangeHandler = (val) => {
+  //   this.setState({
+  //     placeName: val
+  //   })
+  // }
+  // placeSubmiteHandler= () => {
+  //   if(this.state.placeName.trim() === ""){
+  //     return;
+  //   }
+  //   this.props.onAddPlace(this.state.placeName)
+
+  // }
+  // placeDeletedHandler = () => {
+  //   this.props.onDeletePlace()
+  // }
+  // modalClosedHandler = () => {
+  //   this.props.onDeselectPlace()
+  // }
+  // selectItemHandler = (key) => {
+  //   this.props.onSelectPlace(key)
+  // }
 
   render(){
     return (
-      <View style={styles.container}>
-        <PlaceDetail
-        selectedPlace ={this.props.selectedPlace}
-        onItemDeleted={this.props.onDeletePlace}
-        onModalClosed={this.props.onDeselectPlace}
-         />
-        <View style={styles.InputContainer}>
-
-          <TextInput
-          placeholder="An Awesome Vicman"
-          style={styles.placeInput}
-          value={this.state.placeName}
-          onChangeText={this.placeNameChangeHandler}/>
-
-          <Button 
-          style={styles.placeButton}
-          title="Add" 
-          onPress={this.placeSubmiteHandler}
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Authentication">
+          <Stack.Screen 
+          name="Authentication"
+          component={AuthScreen}
+          options={{
+            title: "Vicman", 
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
           />
+          <Stack.Screen 
+          name="Details"
+          component={DetailScreen}
+          />
+        </Stack.Navigator>
 
-        </View>
-        <PlaceList 
-          places={this.props.places}
-          selectItem={this.selectItemHandler}
-        />
-      </View>
+        {/* <View style={styles.container}>
+          <PlaceDetail
+          selectedPlace ={this.props.selectedPlace}
+          onItemDeleted={this.props.onDeletePlace}
+          onModalClosed={this.props.onDeselectPlace}
+          />
+          <View style={styles.InputContainer}>
+
+            <TextInput
+            placeholder="An Awesome Vicman"
+            style={styles.placeInput}
+            value={this.state.placeName}
+            onChangeText={this.placeNameChangeHandler}/>
+
+            <Button 
+            style={styles.placeButton}
+            title="Add" 
+            onPress={this.placeSubmiteHandler}
+            />
+
+          </View>
+          <PlaceList 
+            places={this.props.places}
+            selectItem={this.selectItemHandler}
+          />
+        </View> */}
+      </NavigationContainer>
     );
   }
 }
