@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
 import {NavigationContainer} from '@react-navigation/native'
-import {createStackNavigator} from '@react-navigation/stack'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 
-import AuthScreen from './src/screens/Auth/Auth'
-import DetailScreen from './src/screens/Detail/Detail'
+import HomeTab from './src/Tabs/Home/Home'
+import SettingTab from './src/Tabs/Settings/settings'
 import {connect} from 'react-redux'
 import { StyleSheet, View, TextInput, Button } from 'react-native';
 
-import PlaceList from './src/components/PlaceList/PlaceList';
-import PlaceDetail from './src/components/PlaceDetail/PlaceDetail'
+
 import {addPlace, deletPlace, selectPlace, deselectPlace} from './src/store/actions/index'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
-const Stack = createStackNavigator()
+const Tab = createBottomTabNavigator()
 
 class App extends Component{
   // state ={
@@ -40,29 +40,41 @@ class App extends Component{
   //   this.props.onSelectPlace(key)
   // }
 
+  
   render(){
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Authentication">
-          <Stack.Screen 
-          name="Authentication"
-          component={AuthScreen}
-          options={{
-            title: "Vicman", 
-            headerStyle: {
-              backgroundColor: '#f4511e',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
+        <Tab.Navigator
+          screenOptions={({route}) => ({
+            tabBarIcon: ({focused, color, size}) => {
+              let iconName;
+              if(route.name === "Home"){
+                iconName = focused ? 'ios-information-circle' : 'ios-information-circle-outline';
+              }else if(route.name === 'Settings'){
+                iconName = focused ? 'ios-list-box': 'ios-list';
+              }
+              return <Icon name={iconName} size = {size} color={color} />
+            }
+          })}
+          tabBarOptions = {{
+            activeTintColor: 'tomato', 
+            inactiveTintColor: 'gray'
           }}
+          
+        >
+          <Tab.Screen name="Home" component={HomeTab} options={{tabBarBadge: 3}} />
+          <Tab.Screen name="Settings" component={SettingTab}  options={{tabBarBadge: 7}}/>
+        </Tab.Navigator>
+        {/* <HomeStack.Navigator initialRouteName="Home">
+          <HomeStack.Screen 
+          name="Home"
+          component={HomeScreen}
           />
-          <Stack.Screen 
+          <HomeStack.Screen 
           name="Details"
           component={DetailScreen}
           />
-        </Stack.Navigator>
+        </HomeStack.Navigator> */}
 
         {/* <View style={styles.container}>
           <PlaceDetail
