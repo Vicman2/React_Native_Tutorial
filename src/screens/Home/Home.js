@@ -1,22 +1,29 @@
 import React, {Component} from 'react'
-import {View, Text, Button} from 'react-native'
-
+import {View, Text, Button, StyleSheet} from 'react-native'
+import PlaceInput from '../../PlaceInput/PlaceInput'
+import {connect} from 'react-redux'
+import {addPlace} from '../../store/actions'
 
 class HomeScreen extends Component{
     render(){
         const {navigation} = this.props
         return(
-            <View>
-                <Text>This is The Home Screen</Text>
-                <Button 
-                title="Go to details" 
-                onPress={() => navigation.navigate('Details', {
-                   itemId: 23, 
-                   name: "Vicman"
-                })} />
+            <View style={style.container}>
+                <PlaceInput addPlace= {this.props.onAddPlace}/>
             </View>
         )
     }
 }
 
-export default HomeScreen
+const style = StyleSheet.create({
+    container :{
+        marginTop: 20
+    }
+})
+
+const dispatchMappedToProps = dispatch => {
+    return{
+        onAddPlace : (placeName) => dispatch(addPlace(placeName))
+    }
+}
+export default connect(null, dispatchMappedToProps) (HomeScreen)
