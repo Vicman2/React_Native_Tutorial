@@ -6,6 +6,7 @@ import HomeTab from './src/Tabs/Home/Home'
 import SettingTab from './src/Tabs/Settings/settings'
 import {connect} from 'react-redux'
 import { StyleSheet, View, TextInput, Button } from 'react-native';
+import Auth from './src/screens/Auth/Auth'
 
 
 import {addPlace, deletPlace, selectPlace, deselectPlace} from './src/store/actions/index'
@@ -14,36 +15,25 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator()
 
-class App extends Component{
-  // state ={
-  //   placeName:"", 
-  // }
-  // placeNameChangeHandler = (val) => {
-  //   this.setState({
-  //     placeName: val
-  //   })
-  // }
-  // placeSubmiteHandler= () => {
-  //   if(this.state.placeName.trim() === ""){
-  //     return;
-  //   }
-  //   this.props.onAddPlace(this.state.placeName)
+class App extends Component{  
+  state = {
+    isLoggedIn : false
+  }
 
-  // }
-  // placeDeletedHandler = () => {
-  //   this.props.onDeletePlace()
-  // }
-  // modalClosedHandler = () => {
-  //   this.props.onDeselectPlace()
-  // }
-  // selectItemHandler = (key) => {
-  //   this.props.onSelectPlace(key)
-  // }
+  onAuth  = () => {
+    this.setState((prevState) => {
+      return {
+        isLoggedIn : !prevState.isLoggedIn
+      }
+    })
+  }
 
   
   render(){
-    return (
-      <NavigationContainer>
+    let toDisplay =
+      <Auth  onAuthing={this.onAuth}/>
+    if(this.state.isLoggedIn){
+      toDisplay = <NavigationContainer>
         <Tab.Navigator
           screenOptions={({route}) => ({
             tabBarIcon: ({focused, color, size}) => {
@@ -64,45 +54,15 @@ class App extends Component{
         >
           <Tab.Screen name="Home" component={HomeTab} options={{tabBarBadge: 3}} />
           <Tab.Screen name="Settings" component={SettingTab}  options={{tabBarBadge: 7}}/>
-        </Tab.Navigator>
-        {/* <HomeStack.Navigator initialRouteName="Home">
-          <HomeStack.Screen 
-          name="Home"
-          component={HomeScreen}
-          />
-          <HomeStack.Screen 
-          name="Details"
-          component={DetailScreen}
-          />
-        </HomeStack.Navigator> */}
-
-        {/* <View style={styles.container}>
-          <PlaceDetail
-          selectedPlace ={this.props.selectedPlace}
-          onItemDeleted={this.props.onDeletePlace}
-          onModalClosed={this.props.onDeselectPlace}
-          />
-          <View style={styles.InputContainer}>
-
-            <TextInput
-            placeholder="An Awesome Vicman"
-            style={styles.placeInput}
-            value={this.state.placeName}
-            onChangeText={this.placeNameChangeHandler}/>
-
-            <Button 
-            style={styles.placeButton}
-            title="Add" 
-            onPress={this.placeSubmiteHandler}
-            />
-
-          </View>
-          <PlaceList 
-            places={this.props.places}
-            selectItem={this.selectItemHandler}
-          />
-        </View> */}
+       </Tab.Navigator>
       </NavigationContainer>
+    }
+    
+    return (
+      <View style={styles.container}>
+        {toDisplay}
+      </View>
+      
     );
   }
 }
@@ -123,13 +83,8 @@ const styles = StyleSheet.create({
     flexDirection:'row', 
     justifyContent:'space-around',
     alignItems:'center'
-  }, 
-  placeInput:{
-    width: "70%"
-  }, 
-  placeButton: {
-    width:"30%"
   },
+
 });
 
 const mapStateToProps = state => {
